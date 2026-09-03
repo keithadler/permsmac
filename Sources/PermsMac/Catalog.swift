@@ -79,11 +79,14 @@ enum Catalog {
     static var watched: [Service] { services.filter { $0.tier == .high } }
 
     static let loginItemsURL = URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension")!
+    static let profilesURL = URL(string: "x-apple.systempreferences:com.apple.Profiles-Settings.extension")!
 }
 
 /// Why the permissions database says a grant exists. Numbers from Apple's tccd.
 enum Reason: Int {
     case error = 1, userConsent = 2, userSet = 3, systemSet = 4, servicePolicy = 5, mdmPolicy = 6, overridePolicy = 7, missingUsageString = 8, promptTimeout = 9, preflightUnknown = 10, entitled = 11, appTypePolicy = 12
+    /// Set by a profile or by macOS itself: System Settings will not let a person remove these.
+    var fromProfile: Bool { [.systemSet, .mdmPolicy, .overridePolicy].contains(self) }
     var text: String {
         switch self {
         case .userConsent: return "you clicked Allow"

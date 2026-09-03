@@ -83,6 +83,8 @@ permsmac status</pre>
 <p>macOS keeps those two elsewhere, readable only by root. Their panes are still one click away: <em>permsmac open location</em>.</p>
 <h3>An app I trust shows up in red</h3>
 <p>Red is about the power of the permission, not the app. Your screen recorder needs Screen Recording. The list is there so you can see which apps hold that power and decide for yourself.</p>
+<h3>System Settings says an entry was configured by a profile</h3>
+<p>A configuration profile from device management (an employer's JumpCloud, Jamf, Kandji and the like) created it, and System Settings only removes such entries together with the profile. Look under General › Device Management. If the Mac is still enrolled with that service, removing the enrollment removes every profile it pushed; if the Mac is still supposed to be managed, leave it and ask whoever manages it.</p>
 <h3>A permission is listed twice</h3>
 <p>Some apps hold one grant per version or per install path. Each row is a real entry in the database; System Settings shows only one.</p>
 </main></body></html>

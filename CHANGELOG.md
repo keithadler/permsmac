@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6 — 2026-09-03
+
+Leftovers a management profile created now get a "Device Management…" button, since System Settings only removes them with the profile. Help explains what to do.
+
 ## 1.0.5 — 2026-09-03
 
 Leftovers stored by path, which tccutil cannot address, now show a "Remove in System Settings…" button on the row. An app's main executable is no longer repeated in its name.

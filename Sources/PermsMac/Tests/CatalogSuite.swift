@@ -24,6 +24,7 @@ enum CatalogSuite {
             t.equal(Reason(rawValue: 2)?.text, "you clicked Allow", "consent")
             t.equal(Reason(rawValue: 6)?.text, "set by a management profile", "mdm")
             t.check(Reason(rawValue: 99) == nil, "unknown reason is nil")
+            t.check(Reason.mdmPolicy.fromProfile && Reason.systemSet.fromProfile && !Reason.userConsent.fromProfile, "profile reasons")
         },
         TestCase(name: "CLI finds services by any spelling") { t in
             t.equal(CLI.findService("camera")?.key, "kTCCServiceCamera", "lowercase")
