@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 — 2026-09-03
+
+For fleets. Run as root, `list`, `changes` and `audit` read every account and tag grants with the user (`--user` limits it). Every JSON document carries host, user, time and version. New `permsmac audit policy.json`: allow-lists per permission with globs, optional startup allow-list and leftover check; exit 0 compliant, 1 violations, 2 could not check; `--example` prints a starter. Jamf extension attribute and JumpCloud command in docs/fleet.
+
 ## 1.0.6 — 2026-09-03
 
 Leftovers a management profile created now get a "Device Management…" button, since System Settings only removes them with the profile. Help explains what to do.

@@ -6,7 +6,7 @@ Camera, microphone, screen recording, keyboard, files, contacts, automation, and
 
 ## Download
 
-**[Download Permissions-for-Mac-1.0.6.dmg](https://github.com/keithadler/permsmac/releases/latest/download/Permissions-for-Mac-1.0.6.dmg)** (macOS 14 or later, Apple Silicon and Intel)
+**[Download Permissions-for-Mac-1.1.0.dmg](https://github.com/keithadler/permsmac/releases/latest/download/Permissions-for-Mac-1.1.0.dmg)** (macOS 14 or later, Apple Silicon and Intel)
 
 Open the DMG, drag the app to Applications, open it. The first time, macOS says the app is from an unidentified developer: right-click the app, choose Open, then Open again. That is once.
 
@@ -36,6 +36,23 @@ permsmac open "full disk access"
 ```
 
 The command reads the same database, so the process running it needs Full Disk Access too: the app has it once you grant it; Terminal needs its own grant.
+
+## For fleets
+
+No MDM shows which apps your users have granted Screen Recording, Accessibility, Full Disk Access or the microphone. The command line does, and it was written to run from one.
+
+- **Run as root** (the way an MDM agent runs), `list`, `changes` and `audit` read every account under `/Users` and tag each grant with its user. `--user <name>` limits it. The agent already has Full Disk Access, so nothing needs granting.
+- **Every JSON document** carries `host`, `user`, `when` and `version`, so a thousand outputs merge into one table.
+- **`permsmac audit policy.json`** checks the Mac against a written policy: which apps may hold each permission (globs like `com.apple.*`), whether leftovers from removed apps are allowed, and which launch agents may start on their own. Exit 0 when compliant, 1 with a list of violations, 2 when it could not check. `permsmac audit --example` prints a starter policy.
+- **Ready scripts** in [docs/fleet](docs/fleet): a Jamf Pro extension attribute, a JumpCloud command, and the example policy.
+
+```
+sudo permsmac audit /Library/Management/permissions-policy.json
+sudo permsmac changes --since 1d --json
+sudo permsmac list --service "screen recording" --json
+```
+
+The binary is ad-hoc signed. Packages an MDM installs are not subject to Gatekeeper, but if your security review wants a Developer ID signature, say so in an issue.
 
 ## What it does not do
 

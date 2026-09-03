@@ -233,7 +233,7 @@ struct ChangeRow: View {
             return change.what == .added ? "\(label) now starts on its own" : change.what == .removed ? "\(label) no longer starts on its own" : "\(label) changed how it starts"
         }
         let p = History.parts(change.key)
-        let app = Apps.resolve(p.client, isPath: p.client.hasPrefix("/")).name
+        let app = Apps.resolve(p.client, isPath: p.client.hasPrefix("/")).name + (p.user.map { " (\($0))" } ?? "")
         let s = Catalog.service(p.service).name
         switch change.what {
         case .added: return change.after == "denied" ? "\(app) was refused \(s)" : "\(app) was given \(s)"

@@ -1,0 +1,12 @@
+{
+  "name": "Example endpoint policy",
+  "rules": [
+    { "service": "Screen Recording", "allow": ["com.apple.*", "us.zoom.xos", "com.microsoft.teams2"], "note": "approved meeting tools only" },
+    { "service": "Accessibility",    "allow": ["com.apple.*", "com.jamf.*", "com.1password.*"] },
+    { "service": "Full Disk Access", "allow": ["com.apple.*", "com.jamf.*", "com.crowdstrike.*", "/Library/PrivilegedHelperTools/*"] },
+    { "service": "Input Monitoring", "allow": ["com.apple.*"] },
+    { "service": "Microphone",       "allow": ["com.apple.*", "us.zoom.xos", "com.microsoft.teams2", "com.tinyspeck.slackmacgap"] }
+  ],
+  "startup": { "allow": ["com.apple.*", "com.jamf.*", "com.crowdstrike.*", "com.google.keystone.*", "com.microsoft.*"] },
+  "denyOrphans": true
+}

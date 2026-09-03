@@ -13,4 +13,5 @@ final class SuiteTests: XCTestCase {
     @MainActor func testStartup() { runSuite("Startup") }
     @MainActor func testCLI() { runSuite("CLI") }
     @MainActor func testCleanup() { runSuite("Cleanup") }
+    @MainActor func testAudit() { runSuite("Audit") }
 }

@@ -93,8 +93,8 @@ enum History {
     static var decoder: JSONDecoder { let d = JSONDecoder(); d.dateDecodingStrategy = .iso8601; return d }
 
     /// "system|kTCCServiceCamera|com.example.app|" → parts a view can render.
-    static func parts(_ grantKey: String) -> (scope: String, service: String, client: String, target: String?) {
+    static func parts(_ grantKey: String) -> (scope: String, service: String, client: String, target: String?, user: String?) {
         let p = grantKey.split(separator: "|", omittingEmptySubsequences: false).map(String.init)
-        return (p.count > 0 ? p[0] : "", p.count > 1 ? p[1] : "", p.count > 2 ? p[2] : "", p.count > 3 && !p[3].isEmpty ? p[3] : nil)
+        return (p.count > 0 ? p[0] : "", p.count > 1 ? p[1] : "", p.count > 2 ? p[2] : "", p.count > 3 && !p[3].isEmpty ? p[3] : nil, p.count > 4 ? p[4] : nil)
     }
 }

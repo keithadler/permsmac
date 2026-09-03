@@ -20,8 +20,9 @@ struct Grant: Hashable, Identifiable {
     let target: String?       // Automation: the app being controlled
     let modified: Date?
     let scope: Scope
+    var user: String? = nil      // set when read for another account (root, fleet runs)
     enum Scope: String { case user, system }
-    var id: String { "\(scope.rawValue)|\(service)|\(client)|\(target ?? "")" }
+    var id: String { "\(scope.rawValue)|\(service)|\(client)|\(target ?? "")" + (user.map { "|\($0)" } ?? "") }
     var key: String { id }
 }
 
@@ -51,6 +52,25 @@ enum TCC {
         let u = overrideUser ?? userDB, s = overrideSystem ?? systemDB
         let user = try? rows(u, scope: .user), system = try? rows(s, scope: .system)
         return Snapshot(grants: (user ?? []) + (system ?? []), userReadable: user != nil, systemReadable: system != nil)
+    }
+
+    /// Fleet runs: the MDM agent runs as root, and root has no permissions of its own worth listing.
+    /// Every account under /Users gets read, each grant tagged with the account name.
+    static var usersRoot = URL(fileURLWithPath: "/Users")
+    static func userDatabases() -> [(user: String, db: URL)] {
+        guard let names = try? FileManager.default.contentsOfDirectory(atPath: usersRoot.path) else { return [] }
+        return names.sorted().compactMap { n in
+            let db = usersRoot.appendingPathComponent(n).appendingPathComponent("Library/Application Support/com.apple.TCC/TCC.db")
+            return FileManager.default.fileExists(atPath: db.path) ? (n, db) : nil
+        }
+    }
+    static func readAllUsers(only: String? = nil) -> Snapshot {
+        var grants: [Grant] = []; var allReadable = true
+        for (user, db) in userDatabases() where only == nil || only == user {
+            if let rows = try? rows(db, scope: .user) { grants += rows.map { var g = $0; g.user = user; return g } } else { allReadable = false }
+        }
+        let system = try? rows(overrideSystem ?? systemDB, scope: .system)
+        return Snapshot(grants: grants + (system ?? []), userReadable: allReadable, systemReadable: system != nil)
     }
 
     enum ReadError: Error { case cannotOpen(String), badSchema }

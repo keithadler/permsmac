@@ -73,6 +73,9 @@ permsmac open "screen recording"  # the System Settings pane
 permsmac status</pre>
 <p>The command reads the same database, so the process running it needs Full Disk Access: the app has it once you grant it; a Terminal command needs Terminal to have it.</p>
 
+<h3>For fleets</h3>
+<p>Run as root, the command reads every account on the Mac and tags each grant with its user. <code>permsmac audit policy.json</code> checks the Mac against a written policy and exits 0, 1 or 2 (compliant, violations, could not check); <code>permsmac audit --example</code> prints a starter. Every JSON document carries host, user, time and version. Ready-made Jamf and JumpCloud scripts are in the repository under docs/fleet.</p>
+
 <h2 id="privacy">Privacy</h2>
 <p>Nothing leaves the Mac. The only file the app writes is its own history, in <code>~/Library/Application Support/Permissions for Mac</code>. The daily update check asks GitHub for the latest version number and sends nothing about you; it can be turned off in Settings.</p>
 
