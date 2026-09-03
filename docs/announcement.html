@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Permissions for Mac</title>
+<style>
+  :root { color-scheme: light dark; --fg:#1d1d1f; --muted:#6e6e73; --bg:#fff; --card:#f5f5f7; --accent:#6b46c1; }
+  @media (prefers-color-scheme: dark) { :root { --fg:#f5f5f7; --muted:#a1a1a6; --bg:#141416; --card:#232326; --accent:#b794f4; } }
+  body { margin:0; font:17px/1.55 -apple-system,"SF Pro Text",Helvetica,Arial,sans-serif; color:var(--fg); background:var(--bg); }
+  main { max-width:900px; margin:0 auto; padding:56px 24px 96px; }
+  h1 { font-size:44px; line-height:1.1; margin:0 0 12px; letter-spacing:-0.02em; } .lead { font-size:21px; color:var(--muted); margin:0 0 28px; }
+  img { max-width:100%; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,.25); margin:18px 0 32px; }
+  .btn { display:inline-block; background:var(--accent); color:#fff; padding:14px 22px; border-radius:10px; text-decoration:none; font-weight:600; }
+  h2 { font-size:26px; margin:40px 0 8px; } .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; } .card { background:var(--card); border-radius:12px; padding:18px 20px; } .card h3 { margin:0 0 6px; font-size:18px; }
+  code { font:15px ui-monospace,"SF Mono",Menlo,monospace; background:var(--card); padding:2px 6px; border-radius:6px; } .small { color:var(--muted); font-size:15px; }
+</style></head><body><main>
+<h1>Every permission on your Mac.<br>One screen. Plain English.</h1>
+<p class="lead">Camera, microphone, screen, keyboard, files, contacts, automation, and everything that starts without you. What each app can do, how it got it, and what changed since last week.</p>
+<p><a class="btn" href="https://github.com/keithadler/permsmac/releases/latest">Download for macOS</a> &nbsp; <span class="small">Free. Open source. macOS 14 or later.</span></p>
+<img src="screenshots/overview.png" alt="Overview: counts, changes since last week, permissions left behind by removed apps">
+<h2>What it does</h2>
+<div class="grid">
+<div class="card"><h3>Says what it means</h3>"Read everything on your screen, including passwords and messages as you type them." Not "Screen Recording". Most sensitive first.</div>
+<div class="card"><h3>Tells you what changed</h3>A record each time it looks. Given, refused, removed, since yesterday or last month. A notification when an app gains one of the big ones.</div>
+<div class="card"><h3>Shows what starts without you</h3>Launch agents, daemons and login helpers, with when they run and what they start. Apple's own hidden by default.</div>
+<div class="card"><h3>Reads. Never changes anything.</h3>One Full Disk Access grant so it can read the list. Every switch stays in System Settings, one click away from each row.</div>
+</div>
+<img src="screenshots/screen-recording.png" alt="Screen Recording: which apps hold it, how they got it, when">
+<h2>Also a real command line</h2>
+<p><code>permsmac list</code> &nbsp; <code>permsmac changes --since 7d</code> &nbsp; <code>permsmac startup</code> &nbsp; <code>permsmac orphans</code> &nbsp; all with <code>--json</code>. The changes command exits 1 when something changed, so it drops into a script.</p>
+<h2>Honest limits</h2>
+<p class="small">Location Services and Local Network live somewhere only root can read; their panes are still one click away. Removing a launch agent is a Finder job, on purpose. The update check asks GitHub once a day for a version number and can be turned off.</p>
+<p class="small">MIT licensed. Part of a family with <a href="https://github.com/keithadler/clipmac">Clip for Mac</a>, <a href="https://github.com/keithadler/tidymac">Tidy for Mac</a> and <a href="https://github.com/keithadler/stashmac">Stash for Mac</a>.</p>
+</main></body></html>

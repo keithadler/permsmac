@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ayuda de Permissions for Mac</title>
+<style>
+  :root { color-scheme: light dark; --fg: #1d1d1f; --muted: #6e6e73; --bg: #fff; --card: #f5f5f7; --accent: #6b46c1; --line: #e5e5ea; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #f5f5f7; --muted: #a1a1a6; --bg: #1c1c1e; --card: #2c2c2e; --accent: #b794f4; --line: #3a3a3c; } }
+  body { margin: 0; font: 15px/1.55 -apple-system, "SF Pro Text", Helvetica, Arial, sans-serif; color: var(--fg); background: var(--bg); }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 30px; margin: 0 0 4px; } h1 small { display: block; font-size: 15px; font-weight: 400; color: var(--muted); }
+  h2 { font-size: 20px; margin: 36px 0 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+  h3 { font-size: 16px; margin: 20px 0 6px; } .muted { color: var(--muted); }
+  code, pre { font: 13px ui-monospace, "SF Mono", Menlo, monospace; } pre { background: var(--card); padding: 12px 14px; border-radius: 8px; overflow-x: auto; }
+  .card { background: var(--card); border-radius: 10px; padding: 14px 16px; margin: 12px 0; } .warn { border-left: 4px solid #d9a400; }
+  nav a { margin-right: 14px; color: var(--accent); text-decoration: none; } a { color: var(--accent); }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 16px; } td, th { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; } th { color: var(--muted); font-weight: 600; font-size: 13px; }
+</style>
+</head>
+<body><main>
+<h1>Permissions for Mac <small>Todos los permisos de este Mac, en lenguaje claro, con lo que ha cambiado</small></h1>
+<nav><a href="#start">Primeros pasos</a><a href="#read">Leer la lista</a><a href="#changes">Qué cambió</a><a href="#startup">Inicio</a><a href="#fix">Cambiar algo</a><a href="#cli">Línea de comandos</a><a href="#privacy">Privacidad</a><a href="#trouble">Problemas</a></nav>
+
+<h2 id="start">Primeros pasos: un solo permiso</h2>
+<p>macOS guarda la lista de lo que cada app puede hacer en un archivo que solo pueden leer las apps con <strong>Acceso total al disco</strong>. Por eso, la primera vez que abres Permissions for Mac te pide eso y nada más.</p>
+<ol>
+<li>Haz clic en <strong>Open Full Disk Access Settings</strong>. Ajustes del Sistema se abre en el panel correcto.</li>
+<li>Si Permissions for Mac no está en la lista, pulsa <strong>+</strong> (o arrastra la app desde Aplicaciones) y activa su interruptor.</li>
+<li>Vuelve. La ventana se rellena sola en un par de segundos.</li>
+</ol>
+<div class="card">La app abre ese archivo en modo solo lectura e inmutable. No tiene código que escriba en él. Lo único que cambia en tu Mac es su propio archivo de historial.</div>
+
+<h2 id="read">Leer la lista</h2>
+<p>La barra lateral muestra cada tipo de permiso que tiene al menos una app, primero los más delicados. El punto indica cuánto importa:</p>
+<table>
+<tr><th>Punto</th><th>Significa</th><th>Ejemplos</th></tr>
+<tr><td>Rojo</td><td>Puede ver o controlar todo lo que haces</td><td>Grabación de pantalla, Accesibilidad, Acceso total al disco, Monitorización de entrada, Cámara, Micrófono</td></tr>
+<tr><td>Naranja</td><td>Llega a muchos datos personales o a otras apps</td><td>Contactos, Calendarios, Fotos, Automatización, carpetas Escritorio y Documentos</td></tr>
+<tr><td>Gris</td><td>Limitado o inofensivo por sí solo</td><td>Recordatorios, Bluetooth, estado de Concentración</td></tr>
+</table>
+<p>Elige uno y la parte superior de la ventana dice, en una frase, qué puede hacer una app que lo tenga. Debajo, cada app que lo tiene, cómo lo obtuvo y cuándo.</p>
+<p><strong>Not installed</strong> junto a un nombre significa que la app ya no existe pero su permiso sigue en la lista. Conviene limpiarlo, pero no es urgente.</p>
+
+<h2 id="changes">Qué cambió</h2>
+<p>Cada vez que mira (cada cinco minutos mientras está abierta y cada vez que la traes al frente), Permissions for Mac guarda un pequeño registro de lo que vio. La vista general compara el registro más reciente con el de ayer, la semana pasada, el mes pasado o hace tres meses y lista lo que se concedió, rechazó o retiró, y qué elementos de inicio aparecieron o desaparecieron.</p>
+<p>Si una app obtiene un permiso de punto rojo mientras la app está abierta, además recibes una notificación. Se puede desactivar en Ajustes.</p>
+
+<h2 id="startup">Inicio</h2>
+<p><strong>Starts without you</strong> lista los launch agents (por usuario y para todos), los launch daemons (como root, al arrancar) y las apps auxiliares incluidas dentro de aplicaciones para el sistema antiguo de ítems de inicio. Cada fila dice cuándo se ejecuta. Los de Apple están ocultos por defecto.</p>
+<p>Esta parte no necesita ningún permiso: son archivos normales que cualquiera puede leer.</p>
+
+<h2 id="fix">Cambiar algo</h2>
+<p>Permissions for Mac nunca cambia un interruptor. Apple solo lo permite en Ajustes del Sistema, y una herramienta que lee no debería también escribir. Lo que hace es llevarte allí con un clic:</p>
+<ul>
+<li><strong>Change in System Settings…</strong> en la parte superior de cada permiso abre el panel exacto.</li>
+<li>Clic derecho en cualquier fila para <strong>Show in Finder</strong>, el panel de ajustes o copiar el identificador.</li>
+<li>Para un elemento de inicio, clic derecho para <strong>Show in Finder</strong>. Quitarlo es tarea del Finder: mueve el archivo a la Papelera y cierra sesión, o usa el desinstalador de la propia app.</li>
+</ul>
+
+<h2 id="cli">Línea de comandos</h2>
+<pre>ln -s "/Applications/Permissions for Mac.app/Contents/MacOS/PermsMac" /usr/local/bin/permsmac
+permsmac list
+permsmac changes --since 7d       # sale con 1 cuando algo cambió
+permsmac startup
+permsmac orphans
+permsmac explain accessibility
+permsmac open "screen recording"</pre>
+<p>El comando lee la misma base de datos, así que el proceso que lo ejecuta necesita Acceso total al disco: la app lo tiene una vez concedido; un comando en Terminal necesita que Terminal lo tenga.</p>
+
+<h2 id="privacy">Privacidad</h2>
+<p>Nada sale del Mac. El único archivo que escribe la app es su historial, en <code>~/Library/Application Support/Permissions for Mac</code>. La comprobación diaria de actualizaciones pide a GitHub el número de la última versión y no envía nada sobre ti; se puede desactivar en Ajustes.</p>
+
+<h2 id="trouble">Problemas</h2>
+<h3>La ventana sigue en la tarjeta de Acceso total al disco después de activarlo</h3>
+<p>Cierra y vuelve a abrir la app una vez. macOS a veces aplica el permiso solo a procesos nuevos.</p>
+<h3>Faltan Localización y Red local</h3>
+<p>macOS guarda esos dos en otro sitio, legible solo por root. Sus paneles siguen a un clic: <em>permsmac open location</em>.</p>
+<h3>Una app en la que confío aparece en rojo</h3>
+<p>El rojo habla del poder del permiso, no de la app. Tu grabador de pantalla necesita Grabación de pantalla. La lista existe para que veas qué apps tienen ese poder y decidas tú.</p>
+</main></body></html>

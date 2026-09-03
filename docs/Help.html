@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Permissions for Mac Help</title>
+<style>
+  :root { color-scheme: light dark; --fg: #1d1d1f; --muted: #6e6e73; --bg: #fff; --card: #f5f5f7; --accent: #6b46c1; --line: #e5e5ea; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #f5f5f7; --muted: #a1a1a6; --bg: #1c1c1e; --card: #2c2c2e; --accent: #b794f4; --line: #3a3a3c; } }
+  body { margin: 0; font: 15px/1.55 -apple-system, "SF Pro Text", Helvetica, Arial, sans-serif; color: var(--fg); background: var(--bg); }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 30px; margin: 0 0 4px; } h1 small { display: block; font-size: 15px; font-weight: 400; color: var(--muted); }
+  h2 { font-size: 20px; margin: 36px 0 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+  h3 { font-size: 16px; margin: 20px 0 6px; } .muted { color: var(--muted); }
+  code, pre { font: 13px ui-monospace, "SF Mono", Menlo, monospace; } pre { background: var(--card); padding: 12px 14px; border-radius: 8px; overflow-x: auto; }
+  .card { background: var(--card); border-radius: 10px; padding: 14px 16px; margin: 12px 0; } .warn { border-left: 4px solid #d9a400; }
+  nav a { margin-right: 14px; color: var(--accent); text-decoration: none; } a { color: var(--accent); }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 16px; } td, th { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; } th { color: var(--muted); font-weight: 600; font-size: 13px; }
+</style>
+</head>
+<body><main>
+<h1>Permissions for Mac <small>Every permission on this Mac, in plain English, with what changed</small></h1>
+<nav><a href="#start">Getting started</a><a href="#read">Reading the list</a><a href="#changes">What changed</a><a href="#startup">Startup</a><a href="#fix">Changing something</a><a href="#cli">Command line</a><a href="#privacy">Privacy</a><a href="#trouble">Troubleshooting</a></nav>
+
+<h2 id="start">Getting started: one permission</h2>
+<p>macOS keeps the list of what every app is allowed to do in a file that only apps with <strong>Full Disk Access</strong> may read. So the first time you open Permissions for Mac it asks for that, and nothing else.</p>
+<ol>
+<li>Click <strong>Open Full Disk Access Settings</strong>. System Settings opens at the right pane.</li>
+<li>If Permissions for Mac is not in the list, click <strong>+</strong> (or drag the app in from Applications) and turn its switch on.</li>
+<li>Come back. The window fills in on its own within a couple of seconds.</li>
+</ol>
+<div class="card">The app opens that file read-only and marked immutable. It has no code that writes to it. The only thing it changes on your Mac is its own history file.</div>
+
+<h2 id="read">Reading the list</h2>
+<p>The sidebar lists every kind of permission that at least one app holds, most sensitive first. The dot says how much it matters:</p>
+<table>
+<tr><th>Dot</th><th>Means</th><th>Examples</th></tr>
+<tr><td>Red</td><td>Can see or control everything you do</td><td>Screen Recording, Accessibility, Full Disk Access, Input Monitoring, Camera, Microphone</td></tr>
+<tr><td>Orange</td><td>Reaches a lot of personal data or other apps</td><td>Contacts, Calendars, Photos, Automation, Desktop and Documents folders</td></tr>
+<tr><td>Grey</td><td>Narrow or harmless on its own</td><td>Reminders, Bluetooth, Focus status</td></tr>
+</table>
+<p>Pick one and the top of the window says, in a sentence, what an app holding it can do. Under it, every app that has it, with how it got it ("you clicked Allow", "set in System Settings", "set by a management profile") and when.</p>
+<p><strong>Not installed</strong> next to a name means the app is gone but its permission is still on the list. That is tidy to clean up, not urgent: nothing can use a permission it no longer exists to use.</p>
+
+<h2 id="changes">What changed</h2>
+<p>Each time it looks (every five minutes while it is open, and whenever you bring it forward), Permissions for Mac keeps a small record of what it saw. The Overview compares the newest record with the one from yesterday, last week, last month or three months ago and lists what was given, refused or removed, and which startup items appeared or went.</p>
+<p>When an app gains a red-dot permission while the app is running, you also get a notification. Turn that off in Settings if you prefer to just look.</p>
+<div class="card">The first day there is nothing to compare with yet. From the first change on, it shows up here.</div>
+
+<h2 id="startup">Startup</h2>
+<p><strong>Starts without you</strong> lists launch agents (per user and for every user), launch daemons (run as root, at boot) and helper apps bundled inside applications for the older login-item system. Each row says when it runs: at login, on a timer, or only when something asks for it, and whether it restarts itself if it stops. Apple's own are hidden by default; a checkbox shows them.</p>
+<p>This part needs no permission: they are plain files anyone can read.</p>
+
+<h2 id="fix">Changing something</h2>
+<p>Permissions for Mac never flips a switch. Apple only allows that in System Settings, and a tool that reads should not also write. What it does is get you there in one click:</p>
+<ul>
+<li><strong>Change in System Settings…</strong> at the top of every permission opens the exact pane.</li>
+<li>Right-click any row for <strong>Show in Finder</strong>, the settings pane, or copying the identifier.</li>
+<li>For a startup item, right-click for <strong>Show in Finder</strong>. Removing one is a Finder job: move the file to the Trash and log out and in, or use the app's own uninstaller, which is usually cleaner.</li>
+</ul>
+
+<h2 id="cli">Command line</h2>
+<pre>ln -s "/Applications/Permissions for Mac.app/Contents/MacOS/PermsMac" /usr/local/bin/permsmac
+permsmac list                     # every allowed permission, grouped
+permsmac list --service camera --json
+permsmac changes --since 7d       # exit 1 when something changed, so it works in a script
+permsmac startup
+permsmac orphans                  # grants left behind by removed apps
+permsmac explain accessibility
+permsmac open "screen recording"  # the System Settings pane
+permsmac status</pre>
+<p>The command reads the same database, so the process running it needs Full Disk Access: the app has it once you grant it; a Terminal command needs Terminal to have it.</p>
+
+<h2 id="privacy">Privacy</h2>
+<p>Nothing leaves the Mac. The only file the app writes is its own history, in <code>~/Library/Application Support/Permissions for Mac</code>. The daily update check asks GitHub for the latest version number and sends nothing about you; it can be turned off in Settings.</p>
+
+<h2 id="trouble">Troubleshooting</h2>
+<h3>The window stays on the Full Disk Access card after I turned the switch on</h3>
+<p>Quit and reopen the app once. macOS sometimes applies the grant only to new processes.</p>
+<h3>Location Services and Local Network are missing</h3>
+<p>macOS keeps those two elsewhere, readable only by root. Their panes are still one click away: <em>permsmac open location</em>.</p>
+<h3>An app I trust shows up in red</h3>
+<p>Red is about the power of the permission, not the app. Your screen recorder needs Screen Recording. The list is there so you can see which apps hold that power and decide for yourself.</p>
+<h3>A permission is listed twice</h3>
+<p>Some apps hold one grant per version or per install path. Each row is a real entry in the database; System Settings shows only one.</p>
+</main></body></html>
