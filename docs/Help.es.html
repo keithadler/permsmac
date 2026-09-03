@@ -39,7 +39,7 @@
 <tr><td>Gris</td><td>Limitado o inofensivo por sí solo</td><td>Recordatorios, Bluetooth, estado de Concentración</td></tr>
 </table>
 <p>Elige uno y la parte superior de la ventana dice, en una frase, qué puede hacer una app que lo tenga. Debajo, cada app que lo tiene, cómo lo obtuvo y cuándo.</p>
-<p><strong>Not installed</strong> junto a un nombre significa que la app ya no existe pero su permiso sigue en la lista. Conviene limpiarlo, pero no es urgente.</p>
+<p><strong>Not installed</strong> junto a un nombre significa que la app ya no existe pero su permiso sigue en la lista. Nada puede usar un permiso de una app que ya no existe, así que es orden, no urgencia. El botón <strong>Clean Up…</strong> de la vista general muestra esas entradas y, cuando confirmas, las borra una a una con el <code>tccutil reset</code> de Apple, lo mismo que hace el botón − de Ajustes del Sistema. Las entradas de apps instaladas, las guardadas por ruta y las de Apple nunca se tocan. Si una resulta ser un ayudante de una app que sigues usando, esa app simplemente vuelve a preguntar.</p>
 
 <h2 id="changes">Qué cambió</h2>
 <p>Cada vez que mira (cada cinco minutos mientras está abierta y cada vez que la traes al frente), Permissions for Mac guarda un pequeño registro de lo que vio. La vista general compara el registro más reciente con el de ayer, la semana pasada, el mes pasado o hace tres meses y lista lo que se concedió, rechazó o retiró, y qué elementos de inicio aparecieron o desaparecieron.</p>
@@ -50,7 +50,7 @@
 <p>Esta parte no necesita ningún permiso: son archivos normales que cualquiera puede leer.</p>
 
 <h2 id="fix">Cambiar algo</h2>
-<p>Permissions for Mac nunca cambia un interruptor. Apple solo lo permite en Ajustes del Sistema, y una herramienta que lee no debería también escribir. Lo que hace es llevarte allí con un clic:</p>
+<p>Permissions for Mac nunca cambia un permiso de una app que tienes. Apple solo lo permite en Ajustes del Sistema, y una herramienta que lee no debería también escribir. Lo que hace es llevarte allí con un clic:</p>
 <ul>
 <li><strong>Change in System Settings…</strong> en la parte superior de cada permiso abre el panel exacto.</li>
 <li>Clic derecho en cualquier fila para <strong>Show in Finder</strong>, el panel de ajustes o copiar el identificador.</li>
@@ -63,6 +63,8 @@ permsmac list
 permsmac changes --since 7d       # sale con 1 cuando algo cambió
 permsmac startup
 permsmac orphans
+permsmac orphans --commands       # las líneas de tccutil, para ejecutarlas tú
+permsmac orphans --clean          # ejecutarlas ahora
 permsmac explain accessibility
 permsmac open "screen recording"</pre>
 <p>El comando lee la misma base de datos, así que el proceso que lo ejecuta necesita Acceso total al disco: la app lo tiene una vez concedido; un comando en Terminal necesita que Terminal lo tenga.</p>

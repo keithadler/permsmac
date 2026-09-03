@@ -39,7 +39,7 @@
 <tr><td>Grey</td><td>Narrow or harmless on its own</td><td>Reminders, Bluetooth, Focus status</td></tr>
 </table>
 <p>Pick one and the top of the window says, in a sentence, what an app holding it can do. Under it, every app that has it, with how it got it ("you clicked Allow", "set in System Settings", "set by a management profile") and when.</p>
-<p><strong>Not installed</strong> next to a name means the app is gone but its permission is still on the list. That is tidy to clean up, not urgent: nothing can use a permission it no longer exists to use.</p>
+<p><strong>Not installed</strong> next to a name means the app is gone but its permission is still on the list. Nothing can use a permission it no longer exists to use, so this is tidy rather than urgent. The Overview's <strong>Clean Up…</strong> button shows those entries and, when you confirm, clears them one at a time with Apple's own <code>tccutil reset</code>, the same thing the − button in System Settings does. Entries for apps that are still installed, entries stored by path, and Apple's own are never touched. If one of them turns out to be a helper of an app you still use, that app simply asks again.</p>
 
 <h2 id="changes">What changed</h2>
 <p>Each time it looks (every five minutes while it is open, and whenever you bring it forward), Permissions for Mac keeps a small record of what it saw. The Overview compares the newest record with the one from yesterday, last week, last month or three months ago and lists what was given, refused or removed, and which startup items appeared or went.</p>
@@ -51,7 +51,7 @@
 <p>This part needs no permission: they are plain files anyone can read.</p>
 
 <h2 id="fix">Changing something</h2>
-<p>Permissions for Mac never flips a switch. Apple only allows that in System Settings, and a tool that reads should not also write. What it does is get you there in one click:</p>
+<p>Permissions for Mac never changes a permission for an app you have. Apple only allows that in System Settings, and a tool that reads should not also write. What it does is get you there in one click:</p>
 <ul>
 <li><strong>Change in System Settings…</strong> at the top of every permission opens the exact pane.</li>
 <li>Right-click any row for <strong>Show in Finder</strong>, the settings pane, or copying the identifier.</li>
@@ -65,6 +65,8 @@ permsmac list --service camera --json
 permsmac changes --since 7d       # exit 1 when something changed, so it works in a script
 permsmac startup
 permsmac orphans                  # grants left behind by removed apps
+permsmac orphans --commands       # the tccutil lines, to run yourself
+permsmac orphans --clean          # run them now
 permsmac explain accessibility
 permsmac open "screen recording"  # the System Settings pane
 permsmac status</pre>

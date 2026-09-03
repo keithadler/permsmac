@@ -23,8 +23,9 @@ enum Screenshots {
         let model = PermsModel.shared
         // Two records a week apart so the overview has changes to show.
         let earlier = TCC.read()
-        var records = [Record(date: Date().addingTimeInterval(-8 * 86400), grants: earlier.grants.filter { !Demo.recent.contains($0.client) }, startup: [], complete: true)]
-        History.append(Record(grants: earlier.grants, startup: [], complete: true), to: &records); History.save(records)
+        let startup = Startup.scan()   // present in both records: the demo shows permission changes, not temp-folder paths
+        var records = [Record(date: Date().addingTimeInterval(-8 * 86400), grants: earlier.grants.filter { !Demo.recent.contains($0.client) }, startup: startup, complete: true)]
+        History.append(Record(grants: earlier.grants, startup: startup, complete: true), to: &records); History.save(records)
         model.records = records
         model.refresh(notify: false)
 

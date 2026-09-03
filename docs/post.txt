@@ -4,7 +4,7 @@ Every permission on your Mac on one screen, in plain English: camera, microphone
 
 What each one actually means ("read everything on your screen, including passwords as you type them"), which apps hold it, how they got it, and what changed since last week. A notification when an app gains one of the big ones.
 
-It reads. It never changes anything. One Full Disk Access grant so it can read the list; every switch stays in System Settings, one click away.
+It never changes a permission for an app you have. One Full Disk Access grant so it can read the list; every switch stays in System Settings, one click away. Leftovers from apps you deleted: one click, Apple's own tool.
 
 Also a real command line: permsmac changes --since 7d
 

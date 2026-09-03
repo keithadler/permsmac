@@ -26,6 +26,8 @@ check "list --all shows denied" '[ "$("$BIN" list --all --json | grep -c "\"stat
 check "list --service filters" '"$BIN" list --service camera --json | grep -q kTCCServiceCamera && ! "$BIN" list --service camera --json | grep -q ScreenCapture'
 check "bad service is usage error" '"$BIN" list --service nonsense >/dev/null 2>&1; [ $? = 64 ]'
 check "orphans exit 1" '"$BIN" orphans --json >/dev/null; [ $? = 1 ]'
+check "orphans --commands prints tccutil lines" '("$BIN" orphans --commands || true) | grep -q "tccutil reset Camera com.example.a"'
+check "orphans --commands never includes Apple" '! ("$BIN" orphans --commands || true) | grep -q com.apple'
 check "first changes: nothing" '"$BIN" changes --json >/dev/null; [ $? = 0 ]'
 # Back-date the record, add a grant, look again.
 python3 - "$PERMSMAC_HOME/history.json" <<'PY'

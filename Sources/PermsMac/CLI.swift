@@ -14,6 +14,8 @@ enum CLI {
       permsmac changes [--since 7d|30d|24h] [--json]      what changed; exit 1 when something did
       permsmac startup [--apple] [--json]                 launch agents, daemons and login helpers
       permsmac orphans [--json]                           grants left behind by apps no longer installed
+      permsmac orphans --commands                         the tccutil lines that would clear them, to run yourself
+      permsmac orphans --clean [--json]                   clear them now with Apple's tccutil (only apps that are gone)
       permsmac explain <service>                          what a permission lets an app do
       permsmac open <service|login>                       the System Settings pane for it
       permsmac status [--json]                            can it read the database yet, when it last looked
@@ -21,6 +23,8 @@ enum CLI {
       permsmac selftest [--filter S] [--list] [--json]
       permsmac help | version
 
+    `orphans --clean` is the one thing that changes anything, and only for apps that no longer exist on
+    disk; entries for installed apps and Apple's own are always skipped.
     Reading the permissions database needs Full Disk Access for the process running this command:
     the app after you grant it, or Terminal if you have granted Terminal. Nothing here writes.
     Set PERMSMAC_HOME to keep the history somewhere else (tests do).
@@ -100,6 +104,21 @@ enum CLI {
             if let s = value("--service", args) {
                 guard let svc = findService(s) else { err("unknown permission: \(s)\n"); return 64 }
                 grants = grants.filter { $0.service == svc.key }
+            }
+            if cmd == "orphans" && flag("--commands", args) {
+                let c = Cleanup.commands(grants); for l in c { out(l) }
+                if c.isEmpty { err("Nothing to clear.\n") }; return c.isEmpty ? 0 : 1
+            }
+            if cmd == "orphans" && flag("--clean", args) {
+                let r = Cleanup.run(grants)
+                if js { out(json(["cleared": r.cleared.map(dict), "failed": r.failed.map { ["grant": dict($0.0), "error": $0.1] }, "skipped": r.skipped.map { ["grant": dict($0.0), "why": $0.1] }])) }
+                else {
+                    for g in r.cleared { out("cleared  \(Catalog.service(g.service).name)  \(g.client)") }
+                    for (g, e) in r.failed { out("failed   \(Catalog.service(g.service).name)  \(g.client): \(e)") }
+                    for (g, w) in r.skipped { out("skipped  \(Catalog.service(g.service).name)  \(g.client): \(w)") }
+                    out(r.summary)
+                }
+                return r.failed.isEmpty ? 0 : 2
             }
             if js { out(json(["complete": snap.complete, "grants": grants.map(dict)])); return cmd == "orphans" && !grants.isEmpty ? 1 : 0 }
             let groups = Dictionary(grouping: grants, by: \.service)

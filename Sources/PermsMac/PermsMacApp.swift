@@ -95,6 +95,8 @@ struct AccessBanner: View {
 
 struct OverviewView: View {
     @EnvironmentObject var model: PermsModel
+    @State private var confirmClean = false
+    @State private var cleanResult: String?
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
@@ -118,15 +120,45 @@ struct OverviewView: View {
                     VStack(spacing: 0) { ForEach(model.changes) { ChangeRow(change: $0) } }
                         .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
                 }
-                if !model.orphans.isEmpty {
-                    Text("Left behind").font(.headline)
-                    Text("These apps are gone but their permissions are still on the list. Removing them in System Settings is tidy, not urgent.").font(.callout).foregroundStyle(.secondary)
+                if !model.orphans.isEmpty || cleanResult != nil {
+                    HStack {
+                        Text("Left behind").font(.headline)
+                        Spacer()
+                        if !Cleanup.commands(model.orphans).isEmpty { Button("Clean Up…") { confirmClean = true } }
+                    }
+                    Text("These apps are gone but their permissions are still on the list. Clean Up clears them with Apple's own tccutil, one entry at a time; if one turns out to be a helper of an app you still use, that app simply asks again.").font(.callout).foregroundStyle(.secondary)
+                    if let cleanResult { Text(cleanResult).font(.callout) }
                     VStack(spacing: 0) { ForEach(model.orphans) { GrantRow(grant: $0, showService: true) } }
                         .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
                 }
             }.padding(20)
         }
         .navigationTitle("Overview")
+        .sheet(isPresented: $confirmClean) { CleanupSheet(grants: model.orphans) { r in cleanResult = r.summary.prefix(1).uppercased() + r.summary.dropFirst() + "."; model.refresh(notify: false) } }
+    }
+}
+
+struct CleanupSheet: View {
+    @Environment(\.dismiss) var dismiss
+    let grants: [Grant]
+    let done: (CleanupResult) -> Void
+    var body: some View {
+        let able = grants.filter { Cleanup.objection($0) == nil }
+        let unable = grants.filter { Cleanup.objection($0) != nil }
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Clear \(able.count) leftover \(able.count == 1 ? "permission" : "permissions")?").font(.title3.bold())
+            Text("Each line runs Apple's tccutil for one app that no longer exists on disk. Nothing else is touched.").font(.callout).foregroundStyle(.secondary)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(Cleanup.commands(able), id: \.self) { Text($0).font(.system(.caption, design: .monospaced)) }
+                    if !unable.isEmpty {
+                        Text("Left as they are:").font(.caption.bold()).padding(.top, 6)
+                        ForEach(unable) { g in Text("\(Catalog.service(g.service).name) · \(g.client): \(Cleanup.objection(g) ?? "")").font(.caption).foregroundStyle(.secondary) }
+                    }
+                }.frame(maxWidth: .infinity, alignment: .leading).padding(10)
+            }.frame(height: 200).background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+            HStack { Spacer(); Button("Cancel") { dismiss() }.keyboardShortcut(.cancelAction); Button("Clear") { done(Cleanup.run(able)); dismiss() }.keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent) }
+        }.padding(20).frame(width: 560)
     }
 }
 
