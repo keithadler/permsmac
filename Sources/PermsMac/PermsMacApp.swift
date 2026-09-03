@@ -162,7 +162,7 @@ struct CleanupSheet: View {
                 HStack { Spacer(); Button("Done") { dismiss() }.keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent) }
             } else {
                 Text("Clear \(grants.count - unable.count) leftover \(grants.count - unable.count == 1 ? "permission" : "permissions") from \(groups.count) \(groups.count == 1 ? "app" : "apps")?").font(.title3.bold())
-                Text("One call to Apple's tccutil per app that no longer exists on disk, about a second each. Nothing else is touched.").font(.callout).foregroundStyle(.secondary)
+                Text("One call to Apple's tccutil per app that no longer exists on disk, about a second each. tccutil refuses a name that is not on disk, so for each app the Mac gets an empty placeholder bundle in Permissions for Mac's own folder for the length of that call, then it is removed. Nothing else is touched.").font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 ScrollView {
                     VStack(alignment: .leading, spacing: 4) {
                         ForEach(groups, id: \.client) { g in Text("\(Cleanup.command(g.client))   (\(g.grants.map { Catalog.service($0.service).name }.joined(separator: ", ")))").font(.system(.caption, design: .monospaced)) }

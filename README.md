@@ -6,7 +6,7 @@ Camera, microphone, screen recording, keyboard, files, contacts, automation, and
 
 ## Download
 
-**[Download Permissions-for-Mac-1.0.3.dmg](https://github.com/keithadler/permsmac/releases/latest/download/Permissions-for-Mac-1.0.3.dmg)** (macOS 14 or later, Apple Silicon and Intel)
+**[Download Permissions-for-Mac-1.0.4.dmg](https://github.com/keithadler/permsmac/releases/latest/download/Permissions-for-Mac-1.0.4.dmg)** (macOS 14 or later, Apple Silicon and Intel)
 
 Open the DMG, drag the app to Applications, open it. The first time, macOS says the app is from an unidentified developer: right-click the app, choose Open, then Open again. That is once.
 
@@ -39,7 +39,7 @@ The command reads the same database, so the process running it needs Full Disk A
 
 ## What it does not do
 
-- It does not change a permission for an app you have. Apple only allows that through System Settings. The one exception is Clean Up, which clears entries left behind by apps that no longer exist, using Apple's `tccutil`, only when you click.
+- It does not change a permission for an app you have. Apple only allows that through System Settings. The one exception is Clean Up, which clears entries left behind by apps that no longer exist, using Apple's `tccutil`, only when you click. Because `tccutil` refuses a name that is not on disk, Clean Up briefly registers an empty placeholder bundle with that name inside its own Application Support folder for the length of the call, then removes it.
 - It does not see Location Services or Local Network in detail; macOS keeps those elsewhere, readable only by root.
 - It does not phone home. No analytics, no server, no account. The update check asks GitHub once a day for the latest version number and can be turned off.
 

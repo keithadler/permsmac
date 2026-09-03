@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4 — 2026-09-03
+
+Clean Up actually clears now. Apple's `tccutil` refuses any bundle identifier that is not on disk (error -10814), which is every removed app. For each app, Clean Up now creates an empty placeholder bundle with that identifier in its own Application Support folder, registers it for the length of one `tccutil reset All` call, then unregisters and deletes it. Tests cover the placeholder's contents, the order of operations, and removal on failure.
+
 ## 1.0.3 — 2026-09-03
 
 Clean Up now makes one tccutil call per app (`reset All`) instead of one per entry, runs in the background with a progress count instead of freezing the window, and shows a results list with any tccutil error. The overview refreshes when the sheet closes.
