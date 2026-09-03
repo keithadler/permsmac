@@ -135,6 +135,7 @@ struct OverviewView: View {
         }
         .navigationTitle("Overview")
         .sheet(isPresented: $confirmClean) { CleanupSheet(grants: model.orphans) { r in cleanResult = r.summary.prefix(1).uppercased() + r.summary.dropFirst() + "."; model.refresh(notify: false) } }
+        .onChange(of: confirmClean) { _, open in if !open { model.refresh(notify: false) } }
     }
 }
 
@@ -142,23 +143,51 @@ struct CleanupSheet: View {
     @Environment(\.dismiss) var dismiss
     let grants: [Grant]
     let done: (CleanupResult) -> Void
+    @State private var running = false
+    @State private var progress = (0, 0)
+    @State private var result: CleanupResult?
     var body: some View {
-        let able = grants.filter { Cleanup.objection($0) == nil }
+        let groups = Cleanup.groups(grants)
         let unable = grants.filter { Cleanup.objection($0) != nil }
         VStack(alignment: .leading, spacing: 12) {
-            Text("Clear \(able.count) leftover \(able.count == 1 ? "permission" : "permissions")?").font(.title3.bold())
-            Text("Each line runs Apple's tccutil for one app that no longer exists on disk. Nothing else is touched.").font(.callout).foregroundStyle(.secondary)
-            ScrollView {
-                VStack(alignment: .leading, spacing: 4) {
-                    ForEach(Cleanup.commands(able), id: \.self) { Text($0).font(.system(.caption, design: .monospaced)) }
-                    if !unable.isEmpty {
-                        Text("Left as they are:").font(.caption.bold()).padding(.top, 6)
-                        ForEach(unable) { g in Text("\(Catalog.service(g.service).name) · \(g.client): \(Cleanup.objection(g) ?? "")").font(.caption).foregroundStyle(.secondary) }
-                    }
-                }.frame(maxWidth: .infinity, alignment: .leading).padding(10)
-            }.frame(height: 200).background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
-            HStack { Spacer(); Button("Cancel") { dismiss() }.keyboardShortcut(.cancelAction); Button("Clear") { done(Cleanup.run(able)); dismiss() }.keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent) }
-        }.padding(20).frame(width: 560)
+            if let result {
+                Text(result.summary.prefix(1).uppercased() + result.summary.dropFirst() + ".").font(.title3.bold())
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(Array(Set(result.cleared.map(\.client))).sorted(), id: \.self) { Text("cleared  \($0)").font(.system(.caption, design: .monospaced)) }
+                        ForEach(result.failed, id: \.0.id) { Text("failed   \($0.0.client): \($0.1)").font(.system(.caption, design: .monospaced)).foregroundStyle(.red) }
+                        ForEach(result.skipped, id: \.0.id) { Text("skipped  \($0.0.client): \($0.1)").font(.caption).foregroundStyle(.secondary) }
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(10)
+                }.frame(height: 220).background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+                HStack { Spacer(); Button("Done") { dismiss() }.keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent) }
+            } else {
+                Text("Clear \(grants.count - unable.count) leftover \(grants.count - unable.count == 1 ? "permission" : "permissions") from \(groups.count) \(groups.count == 1 ? "app" : "apps")?").font(.title3.bold())
+                Text("One call to Apple's tccutil per app that no longer exists on disk, about a second each. Nothing else is touched.").font(.callout).foregroundStyle(.secondary)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(groups, id: \.client) { g in Text("\(Cleanup.command(g.client))   (\(g.grants.map { Catalog.service($0.service).name }.joined(separator: ", ")))").font(.system(.caption, design: .monospaced)) }
+                        if !unable.isEmpty {
+                            Text("Left as they are:").font(.caption.bold()).padding(.top, 6)
+                            ForEach(unable) { g in Text("\(Catalog.service(g.service).name) · \(g.client): \(Cleanup.objection(g) ?? "")").font(.caption).foregroundStyle(.secondary) }
+                        }
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(10)
+                }.frame(height: 220).background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
+                HStack {
+                    if running { ProgressView(value: Double(progress.0), total: Double(max(progress.1, 1))).frame(width: 200); Text("\(progress.0) of \(progress.1)").font(.caption).monospacedDigit() }
+                    Spacer()
+                    Button("Cancel") { dismiss() }.keyboardShortcut(.cancelAction).disabled(running)
+                    Button(running ? "Clearing…" : "Clear") { start() }.keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent).disabled(running || groups.isEmpty)
+                }
+            }
+        }.padding(20).frame(width: 600)
+    }
+    private func start() {
+        running = true; progress = (0, Cleanup.groups(grants).count)
+        let grants = grants
+        DispatchQueue.global(qos: .userInitiated).async {
+            let r = Cleanup.run(grants) { d, t in DispatchQueue.main.async { progress = (d, t) } }
+            DispatchQueue.main.async { running = false; result = r; done(r) }
+        }
     }
 }
 

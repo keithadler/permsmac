@@ -110,7 +110,7 @@ enum CLI {
                 if c.isEmpty { err("Nothing to clear.\n") }; return c.isEmpty ? 0 : 1
             }
             if cmd == "orphans" && flag("--clean", args) {
-                let r = Cleanup.run(grants)
+                let r = Cleanup.run(grants) { d, t in if !js { err("\(d) of \(t)\r") } }
                 if js { out(json(["cleared": r.cleared.map(dict), "failed": r.failed.map { ["grant": dict($0.0), "error": $0.1] }, "skipped": r.skipped.map { ["grant": dict($0.0), "why": $0.1] }])) }
                 else {
                     for g in r.cleared { out("cleared  \(Catalog.service(g.service).name)  \(g.client)") }

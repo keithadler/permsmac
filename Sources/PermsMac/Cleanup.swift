@@ -40,23 +40,28 @@ enum Cleanup {
         return nil
     }
 
-    static func command(_ g: Grant) -> String { "tccutil reset \(serviceArgument(g.service)) \(g.client)" }
+    /// One command per app, not per entry: `tccutil reset All <bundle-id>` clears every permission
+    /// that app held. Ninety leftover entries are usually a dozen apps, and each call takes a second.
+    static func command(_ client: String) -> String { "tccutil reset All \(client)" }
 
-    /// The commands a person could run themselves, for the entries that qualify.
-    static func commands(_ grants: [Grant]) -> [String] {
-        Array(Set(grants.filter { objection($0) == nil }.map(command))).sorted()
+    /// The clients that qualify, in a stable order, with the entries each covers.
+    static func groups(_ grants: [Grant]) -> [(client: String, grants: [Grant])] {
+        let ok = grants.filter { objection($0) == nil }
+        return Dictionary(grouping: ok, by: \.client).map { ($0.key, $0.value) }.sorted { $0.client < $1.client }
     }
 
-    static func run(_ grants: [Grant]) -> CleanupResult {
+    /// The commands a person could run themselves.
+    static func commands(_ grants: [Grant]) -> [String] { groups(grants).map { command($0.client) } }
+
+    /// Runs one reset per app. Safe to call off the main thread; `progress` is called after each app.
+    static func run(_ grants: [Grant], progress: ((Int, Int) -> Void)? = nil) -> CleanupResult {
         var r = CleanupResult()
-        var done = Set<String>()
-        for g in grants {
-            if let why = objection(g) { r.skipped.append((g, why)); continue }
-            let key = "\(g.service)|\(g.client)"
-            if done.contains(key) { r.cleared.append(g); continue }    // same entry in both databases: one reset covers it
-            done.insert(key)
-            let (code, out) = runner(["reset", serviceArgument(g.service), g.client])
-            if code == 0 { r.cleared.append(g) } else { r.failed.append((g, out.isEmpty ? "tccutil exited \(code)" : out)) }
+        r.skipped = grants.compactMap { g in objection(g).map { (g, $0) } }
+        let gs = groups(grants)
+        for (i, group) in gs.enumerated() {
+            let (code, out) = runner(["reset", "All", group.client])
+            if code == 0 { r.cleared += group.grants } else { r.failed += group.grants.map { ($0, out.isEmpty ? "tccutil exited \(code)" : out) } }
+            progress?(i + 1, gs.count)
         }
         return r
     }
