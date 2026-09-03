@@ -6,7 +6,7 @@ Camera, microphone, screen recording, keyboard, files, contacts, automation, and
 
 ## Download
 
-**[Download Permissions-for-Mac-1.0.1.dmg](https://github.com/keithadler/permsmac/releases/latest/download/Permissions-for-Mac-1.0.1.dmg)** (macOS 14 or later, Apple Silicon and Intel)
+**[Download Permissions-for-Mac-1.0.2.dmg](https://github.com/keithadler/permsmac/releases/latest/download/Permissions-for-Mac-1.0.2.dmg)** (macOS 14 or later, Apple Silicon and Intel)
 
 Open the DMG, drag the app to Applications, open it. The first time, macOS says the app is from an unidentified developer: right-click the app, choose Open, then Open again. That is once.
 

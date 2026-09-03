@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2 — 2026-09-03
+
+Fixed: changes made a moment ago (a Clean Up, or a switch flipped in System Settings) did not show until macOS folded its write-ahead log back into the database. The app now reads from a private copy of the database and its log, so what it shows is current. Apple's files are still never written to.
+
 ## 1.0.1 — 2026-09-03
 
 Clean Up: clears permissions left behind by apps that no longer exist on disk, with Apple's `tccutil`, one entry at a time, after showing the list. Entries for installed apps, path-based entries and Apple's own are always skipped. `permsmac orphans --commands` prints the lines; `--clean` runs them.

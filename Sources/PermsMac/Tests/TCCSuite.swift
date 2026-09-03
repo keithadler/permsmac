@@ -1,6 +1,7 @@
 //  Permissions for Mac — MIT licensed. See LICENSE.
 import Foundation
 import CryptoKit
+import SQLite3
 
 enum TCCSuite {
     static let suite = TestSuite(name: "TCC", cases: [
@@ -58,6 +59,18 @@ enum TCCSuite {
             let dir = TCC.overrideUser!.deletingLastPathComponent()
             let extras = (try FileManager.default.contentsOfDirectory(atPath: dir.path)).filter { $0.contains("-journal") || $0.contains("-wal") || $0.contains("-shm") }
             t.check(extras.isEmpty, "no journal files created: \(extras)")
+        },
+        TestCase(name: "sees changes still sitting in the write-ahead log") { t in
+            try FakeTCC.write([.init(service: "kTCCServiceCamera", client: "com.example.a"), .init(service: "kTCCServiceCamera", client: "com.example.gone")], to: TCC.overrideUser!)
+            try FakeTCC.write([], to: TCC.overrideSystem!)
+            // Switch to WAL and delete a row on a connection that stays open, so the change lives only in -wal.
+            var db: OpaquePointer?
+            t.check(sqlite3_open(TCC.overrideUser!.path, &db) == SQLITE_OK, "open")
+            t.check(sqlite3_exec(db, "PRAGMA journal_mode=WAL; DELETE FROM access WHERE client='com.example.gone'", nil, nil, nil) == SQLITE_OK, "delete in wal")
+            t.check(FileManager.default.fileExists(atPath: TCC.overrideUser!.path + "-wal"), "wal file exists")
+            let snap = TCC.read()
+            t.equal(snap.grants.map(\.client), ["com.example.a"], "deleted row is gone even before checkpoint")
+            sqlite3_close(db)
         },
         TestCase(name: "garbage file is not a database") { t in
             try Data("not a database".utf8).write(to: TCC.overrideUser!)

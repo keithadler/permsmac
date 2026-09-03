@@ -4,7 +4,7 @@
 //  nothing else. Two copies exist: one per user for camera, contacts and the like, and one for the
 //  whole Mac for Accessibility, Screen Recording, Full Disk Access and Input Monitoring. Both are
 //  readable only by apps that have Full Disk Access, so this app asks for that one permission and
-//  opens the files read-only. It never writes; there is no code path that could.
+//  reads from a private copy of each file. It never writes to Apple's files; there is no code path that could.
 
 import Foundation
 import SQLite3
@@ -55,12 +55,23 @@ enum TCC {
 
     enum ReadError: Error { case cannotOpen(String), badSchema }
 
-    /// Opens with the immutable flag so a database tccd is writing to is read as-is, without touching
-    /// its journal, and with read-only so nothing here could ever change it.
+    /// Reads a private copy. tccd keeps the database in write-ahead-log mode: recent changes sit in
+    /// a -wal side file until macOS folds them in, and opening the original with the immutable flag
+    /// (the only way to open it strictly read-only) ignores that file, so a permission cleared a
+    /// second ago still showed. Copying the database and its log to a temporary folder and opening
+    /// the copy sees everything and still never writes to Apple's files.
     static func rows(_ url: URL, scope: Grant.Scope) throws -> [Grant] {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("permsmac-read-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let copy = dir.appendingPathComponent("TCC.db")
+        do { try FileManager.default.copyItem(at: url, to: copy) } catch { throw ReadError.cannotOpen("\(error.localizedDescription)") }
+        for suffix in ["-wal", "-shm"] {
+            let side = URL(fileURLWithPath: url.path + suffix)
+            if FileManager.default.isReadableFile(atPath: side.path) { try? FileManager.default.copyItem(at: side, to: URL(fileURLWithPath: copy.path + suffix)) }
+        }
         var db: OpaquePointer?
-        let uri = "file:\(url.path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? url.path)?mode=ro&immutable=1"
-        guard sqlite3_open_v2(uri, &db, SQLITE_OPEN_READONLY | SQLITE_OPEN_URI, nil) == SQLITE_OK, let db else {
+        guard sqlite3_open_v2(copy.path, &db, SQLITE_OPEN_READWRITE, nil) == SQLITE_OK, let db else {
             let msg = db.map { String(cString: sqlite3_errmsg($0)) } ?? "open failed"; sqlite3_close(db); throw ReadError.cannotOpen(msg)
         }
         defer { sqlite3_close(db) }
