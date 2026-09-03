@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5 — 2026-09-03
+
+Leftovers stored by path, which tccutil cannot address, now show a "Remove in System Settings…" button on the row. An app's main executable is no longer repeated in its name.
+
 ## 1.0.4 — 2026-09-03
 
 Clean Up actually clears now. Apple's `tccutil` refuses any bundle identifier that is not on disk (error -10814), which is every removed app. For each app, Clean Up now creates an empty placeholder bundle with that identifier in its own Application Support folder, registers it for the length of one `tccutil reset All` call, then unregisters and deletes it. Tests cover the placeholder's contents, the order of operations, and removal on failure.

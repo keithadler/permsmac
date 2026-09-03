@@ -86,6 +86,7 @@ enum TCCSuite {
             t.check(!Apps.isOrphan("com.apple.something.internal", isPath: false), "apple ids are never flagged")
             t.equal(Apps.resolve("/usr/bin/say", isPath: true).name, "say", "tool path → basename")
             t.equal(Apps.resolve("/Applications/X.app/Contents/MacOS/helper", isPath: true).name, "X (helper)", "helper inside an app")
+            t.equal(Apps.resolve("/Applications/Analog Lab V.app/Contents/MacOS/Analog Lab V", isPath: true).name, "Analog Lab V", "main executable is not repeated")
         },
     ])
 }

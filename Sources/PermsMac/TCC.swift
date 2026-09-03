@@ -130,7 +130,7 @@ enum Apps {
                 var appURL = url
                 while appURL.pathExtension != "app", appURL.path != "/" { appURL = appURL.deletingLastPathComponent() }
                 name = FileManager.default.displayName(atPath: appURL.path).replacingOccurrences(of: ".app", with: "")
-                if appURL != url { name += " (\(url.lastPathComponent))" }
+                if appURL != url, url.lastPathComponent != name { name += " (\(url.lastPathComponent))" }
             } else { name = url.lastPathComponent }
         } else if let short = friendlyBundleNames[client] { name = short }
         let r = (name, url); cache[client] = r; return r

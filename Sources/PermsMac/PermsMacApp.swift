@@ -128,7 +128,16 @@ struct OverviewView: View {
                     }
                     Text("These apps are gone but their permissions are still on the list. Clean Up clears them with Apple's own tccutil, one entry at a time; if one turns out to be a helper of an app you still use, that app simply asks again.").font(.callout).foregroundStyle(.secondary)
                     if let cleanResult { Text(cleanResult).font(.callout) }
-                    VStack(spacing: 0) { ForEach(model.orphans) { GrantRow(grant: $0, showService: true) } }
+                    VStack(spacing: 0) {
+                        ForEach(model.orphans) { g in
+                            HStack(spacing: 8) {
+                                GrantRow(grant: g, showService: true)
+                                if Cleanup.objection(g) != nil, let url = Catalog.service(g.service).settingsURL {
+                                    Button("Remove in System Settings…") { NSWorkspace.shared.open(url) }.help("Stored by path, which Apple's tccutil cannot address. Use the − button in the pane.")
+                                }
+                            }.padding(.horizontal, 12).padding(.vertical, 4)
+                        }
+                    }
                         .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
                 }
             }.padding(20)
