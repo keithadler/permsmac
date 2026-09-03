@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 — 2026-09-03
+
+A path inside a folder the current user cannot look into (a root-only /opt/jc, say) was shown as "not installed". It is out of sight, not gone; it is no longer called a leftover.
+
 ## 1.1.0 — 2026-09-03
 
 For fleets. Run as root, `list`, `changes` and `audit` read every account and tag grants with the user (`--user` limits it). Every JSON document carries host, user, time and version. New `permsmac audit policy.json`: allow-lists per permission with globs, optional startup allow-list and leftover check; exit 0 compliant, 1 violations, 2 could not check; `--example` prints a starter. Jamf extension attribute and JumpCloud command in docs/fleet.

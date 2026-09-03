@@ -165,7 +165,15 @@ enum Apps {
         if let demoNames { return demoNames[client] == nil && !client.hasPrefix("com.apple.") }
         let r = resolve(client, isPath: isPath)
         guard let url = r.url else { return !client.hasPrefix("com.apple.") }
-        return !FileManager.default.fileExists(atPath: url.path)
+        if FileManager.default.fileExists(atPath: url.path) { return false }
+        // A path inside a folder this user cannot look into (/opt/jc is root-only) is not "gone",
+        // it is out of sight. Only call it an orphan when every ancestor was readable and it is absent.
+        var dir = url.deletingLastPathComponent()
+        while dir.path != "/" {
+            if FileManager.default.fileExists(atPath: dir.path) { return Foundation.access(dir.path, X_OK) == 0 }
+            dir = dir.deletingLastPathComponent()
+        }
+        return true
     }
     static let friendlyBundleNames: [String: String] = [
         "com.apple.Terminal": "Terminal", "com.apple.finder": "Finder", "com.apple.Safari": "Safari", "com.apple.systemevents": "System Events",

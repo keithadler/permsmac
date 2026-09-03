@@ -85,6 +85,12 @@ enum TCCSuite {
             t.check(Apps.isOrphan("com.example.definitely.not.installed.\(UUID().uuidString)", isPath: false), "missing bundle id is an orphan")
             t.check(!Apps.isOrphan("com.apple.something.internal", isPath: false), "apple ids are never flagged")
             t.equal(Apps.resolve("/usr/bin/say", isPath: true).name, "say", "tool path → basename")
+            t.check(Apps.isOrphan("/usr/local/definitely/not/here/tool", isPath: true), "missing path in readable folders is an orphan")
+            let locked = TestKit.tempDir().appendingPathComponent("locked", isDirectory: true)
+            try FileManager.default.createDirectory(at: locked, withIntermediateDirectories: true)
+            chmod(locked.path, 0)
+            defer { chmod(locked.path, 0o755); try? FileManager.default.removeItem(at: locked.deletingLastPathComponent()) }
+            if getuid() != 0 { t.check(!Apps.isOrphan(locked.appendingPathComponent("bin/agent").path, isPath: true), "path behind an unreadable folder is not called an orphan") }
             t.equal(Apps.resolve("/Applications/X.app/Contents/MacOS/helper", isPath: true).name, "X (helper)", "helper inside an app")
             t.equal(Apps.resolve("/Applications/Analog Lab V.app/Contents/MacOS/Analog Lab V", isPath: true).name, "Analog Lab V", "main executable is not repeated")
         },
