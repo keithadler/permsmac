@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2 — 2026-09-03
+
+"More from the Same Maker" in the Help menu, pointing at the family page. Help and README gained the same section.
+
 ## 1.1.1 — 2026-09-03
 
 A path inside a folder the current user cannot look into (a root-only /opt/jc, say) was shown as "not installed". It is out of sight, not gone; it is no longer called a leftover.

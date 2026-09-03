@@ -24,6 +24,7 @@ struct PermsMacApp: App {
             CommandGroup(replacing: .help) {
                 Button("Permissions for Mac Help") { Help.open() }
                 Button("Check for Updates…") { Updates.checkAndPresent() }
+                Button("More from the Same Maker…") { NSWorkspace.shared.open(URL(string: "https://keithadler.github.io")!) }
                 Divider()
                 Button("Open Privacy & Security Settings") { NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy")!) }
                 Button("Open Login Items Settings") { NSWorkspace.shared.open(Catalog.loginItemsURL) }

@@ -6,7 +6,7 @@ Camera, microphone, screen recording, keyboard, files, contacts, automation, and
 
 ## Download
 
-**[Download Permissions-for-Mac-1.1.1.dmg](https://github.com/keithadler/permsmac/releases/latest/download/Permissions-for-Mac-1.1.1.dmg)** (macOS 14 or later, Apple Silicon and Intel)
+**[Download Permissions-for-Mac-1.1.2.dmg](https://github.com/keithadler/permsmac/releases/latest/download/Permissions-for-Mac-1.1.2.dmg)** (macOS 14 or later, Apple Silicon and Intel)
 
 Open the DMG, drag the app to Applications, open it. The first time, macOS says the app is from an unidentified developer: right-click the app, choose Open, then Open again. That is once.
 
@@ -69,4 +69,12 @@ swift test                    # the same cases through XCTest, with Xcode
 tests/integration.sh          # the command line, end to end, against a synthetic database
 ```
 
-MIT licensed. Part of a small family with [Clip for Mac](https://github.com/keithadler/clipmac), [Tidy for Mac](https://github.com/keithadler/tidymac) and [Stash for Mac](https://github.com/keithadler/stashmac). See [PRIVACY.md](PRIVACY.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
+MIT licensed. See [PRIVACY.md](PRIVACY.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## More from the same maker
+
+Three more small apps built the same way: each does one thing, says exactly what it touches, and never phones home. Free, MIT licensed, no accounts. All four at [keithadler.github.io](https://keithadler.github.io).
+
+- [Clip for Mac](https://github.com/keithadler/clipmac): a clipboard that remembers, with a stack you paste through one item at a time, and that refuses to record passwords.
+- [Tidy for Mac](https://github.com/keithadler/tidymac): cleanup and speed for the whole family; nothing is deleted, only moved to the Trash with an undoable receipt.
+- [Stash for Mac](https://github.com/keithadler/stashmac): encrypted backup into storage you already have; the provider only ever sees ciphertext.
