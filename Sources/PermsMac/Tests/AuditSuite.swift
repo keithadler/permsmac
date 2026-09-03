@@ -52,6 +52,11 @@ enum AuditSuite {
         },
         TestCase(name: "CLI audit exit codes") { t in
             let dir = TestKit.tempDir(); defer { try? FileManager.default.removeItem(at: dir) }
+            // The example policy denies orphans and audits startup items. Both must come from the test,
+            // not the machine it runs on: a CI runner has no Zoom (so us.zoom.xos would be an orphan) and
+            // any Mac has launch agents outside the example allow list.
+            Apps.demoNames = ["us.zoom.xos": "Zoom"]; defer { Apps.demoNames = nil }
+            Startup.overrideRoots = []; defer { Startup.overrideRoots = nil }
             let f = dir.appendingPathComponent("p.json"); try Data(Audit.example.utf8).write(to: f)
             try FakeTCC.write([.init(service: "kTCCServiceCamera", client: "com.apple.FaceTime")], to: TCC.overrideUser!)
             try FakeTCC.write([.init(service: "kTCCServiceScreenCapture", client: "us.zoom.xos")], to: TCC.overrideSystem!)

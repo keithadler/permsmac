@@ -74,8 +74,8 @@ final class PermsModel: ObservableObject {
     func start() {
         refresh(notify: false)
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: Double(Prefs.lookEveryMinutes) * 60, repeats: true) { [weak self] _ in Task { @MainActor in self?.refresh() } }
-        NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in Task { @MainActor in self?.refresh() } }
+        timer = Timer.scheduledTimer(withTimeInterval: Double(Prefs.lookEveryMinutes) * 60, repeats: true) { [weak self] _ in Task { @MainActor [weak self] in self?.refresh() } }
+        NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in Task { @MainActor [weak self] in self?.refresh() } }
     }
 
     /// While Full Disk Access is missing, look every two seconds so the window fills in the moment
@@ -83,7 +83,7 @@ final class PermsModel: ObservableObject {
     private func waitForAccess() {
         guard waitingForAccess == nil else { return }
         waitingForAccess = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
-            Task { @MainActor in if TCC.hasFullDiskAccess { self?.refresh(notify: false) } }
+            Task { @MainActor [weak self] in if TCC.hasFullDiskAccess { self?.refresh(notify: false) } }
         }
     }
 
